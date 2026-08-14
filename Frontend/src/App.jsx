@@ -7,6 +7,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/create-post" />} />
         <Route path='/create-post' element={<CreatePost />} />
         <Route path='/feed' element={<Feed />} />
       </Routes>
