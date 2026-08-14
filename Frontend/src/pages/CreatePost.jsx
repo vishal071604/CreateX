@@ -18,15 +18,21 @@ const CreatePost = () => {
 
     try {
       const formData = new FormData();
-      formData.append("image", image);// Append the image file to the form data
-      formData.append("caption", caption);// Append the caption to the form data
 
-      await axios.post("http://localhost:3000/create-post", formData)
-        .then((response) => {
-            navigate("/feed");
-        });
+      formData.append("image", image);
+      formData.append("caption", caption);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/create-post`,
+        formData
+      );
+
+      console.log(response.data);
+
+      navigate("/feed");
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Error creating post");
     }
   };
