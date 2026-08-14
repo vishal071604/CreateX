@@ -13,6 +13,7 @@ app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() })
 
 
+//Multer gets image → buffer → convert to base64 → upload to ImageKit → get image URL
 app.post('/create-post', upload.single("image"), async (req, res) => {
 
     const result = await uploadFile(req.file.buffer)
