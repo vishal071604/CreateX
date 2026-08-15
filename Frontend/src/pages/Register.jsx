@@ -54,7 +54,7 @@ function Register({ onLogin }) {
 
         {/* Brand */}
         <h1 className="brand-name">
-          Note<span>Sphere</span>
+          Post<span>Sphere</span>
         </h1>
 
         {/* Heading */}
