@@ -11,12 +11,6 @@ const likeRoutes = require("./routes/likeRoutes");
 const app = express();
 
 // =========================
-// DATABASE
-// =========================
-
-connectDB();
-
-// =========================
 // MIDDLEWARE
 // =========================
 
@@ -53,6 +47,15 @@ app.use("/api/likes", likeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    process.exitCode = 1;
+  }
+};
+
+startServer();
