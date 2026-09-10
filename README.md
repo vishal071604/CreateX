@@ -8,9 +8,9 @@ CreateX allows users to register and log in, create posts with text and images, 
 
 ## 🌐 Live Demo
 
-🔗 **Frontend:** https://create-x-sigma.vercel.app
+🔗 **Frontend:** https://create-x-aayy.vercel.app
 
-🔗 **Backend:** https://createx-backend-9xqk.onrender.com
+🔗 **Backend:** https://createx-vpbi.onrender.com
 
 ## 💻 GitHub Repository
 
