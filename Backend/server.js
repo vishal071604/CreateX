@@ -10,13 +10,22 @@ const likeRoutes = require("./routes/likeRoutes");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://create-x-aayy.vercel.app",
+  ...(process.env.CORS_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+];
+
 // =========================
 // MIDDLEWARE
 // =========================
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://create-x-aayy.vercel.app/"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
