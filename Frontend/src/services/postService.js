@@ -1,62 +1,44 @@
-const API_URL =
-  "http://localhost:5000/api/posts";
-
+// API URL
+const API_URL = `${import.meta.env.VITE_API_URL}/posts`;
 
 // =========================
 // CREATE POST
 // =========================
+export const createPost = async (formData) => {
+  const token = localStorage.getItem("token");
 
-export const createPost =
-  async (formData) => {
-    const token =
-      localStorage.getItem("token");
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
 
-    const response = await fetch(
-      API_URL,
-      {
-        method: "POST",
+  const data = await response.json();
 
-        headers: {
-          Authorization:
-            `Bearer ${token}`,
-        },
-
-        body: formData,
-      }
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to create post"
     );
+  }
 
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.message ||
-          "Failed to create post"
-      );
-    }
-
-    return data;
-  };
-
+  return data;
+};
 
 // =========================
 // GET POSTS
 // =========================
+export const getPosts = async () => {
+  const response = await fetch(API_URL);
 
-export const getPosts =
-  async () => {
-    const response =
-      await fetch(API_URL);
+  const data = await response.json();
 
-    const data =
-      await response.json();
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to fetch posts"
+    );
+  }
 
-    if (!response.ok) {
-      throw new Error(
-        data.message ||
-          "Failed to fetch posts"
-      );
-    }
-
-    return data.posts;
-  };
+  return data.posts;
+};

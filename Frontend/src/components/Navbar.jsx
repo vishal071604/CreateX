@@ -1,6 +1,9 @@
 import { logoutUser } from "../services/authService";
 
 function Navbar({ user, onLogout }) {
+  // =========================
+  // LOGOUT
+  // =========================
   const handleLogout = () => {
     logoutUser();
     onLogout();
@@ -8,13 +11,18 @@ function Navbar({ user, onLogout }) {
 
   return (
     <nav className="navbar">
+      {/* App Name */}
       <h2>CreateX</h2>
 
+      {/* User Information */}
       {user && (
         <div>
           <span>Hi, {user.name}</span>
 
-          <button onClick={handleLogout}>
+          <button
+            type="button"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>

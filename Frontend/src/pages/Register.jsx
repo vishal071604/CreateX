@@ -13,6 +13,7 @@ function Register({ onLogin }) {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handle input changes
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -20,6 +21,7 @@ function Register({ onLogin }) {
     });
   };
 
+  // Handle registration
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -33,6 +35,7 @@ function Register({ onLogin }) {
         data.message || "Registration successful"
       );
 
+      // Clear form
       setForm({
         name: "",
         email: "",
@@ -126,11 +129,7 @@ function Register({ onLogin }) {
               <input
                 id="password"
                 name="password"
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword ? "text" : "password"}
                 placeholder="Create a password"
                 value={form.password}
                 onChange={handleChange}
@@ -144,9 +143,7 @@ function Register({ onLogin }) {
                   setShowPassword(!showPassword)
                 }
               >
-                {showPassword
-                  ? "Hide"
-                  : "Show"}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>

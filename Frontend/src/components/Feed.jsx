@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { getPosts } from "../services/postService";
-
 import {
   likePost,
   unlikePost,
@@ -15,7 +14,6 @@ function Feed({ newPost }) {
   // =========================
   // LOAD POSTS
   // =========================
-
   const loadPosts = async () => {
     try {
       setLoading(true);
@@ -23,11 +21,7 @@ function Feed({ newPost }) {
 
       const data = await getPosts();
 
-      if (Array.isArray(data)) {
-        setPosts(data);
-      } else {
-        setPosts([]);
-      }
+      setPosts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Feed error:", error);
       setError(error.message || "Failed to load posts");
@@ -43,13 +37,8 @@ function Feed({ newPost }) {
   // =========================
   // ADD NEW POST
   // =========================
-
   useEffect(() => {
-    if (
-      newPost &&
-      typeof newPost === "object" &&
-      newPost._id
-    ) {
+    if (newPost && newPost._id) {
       setPosts((prevPosts) => {
         const alreadyExists = prevPosts.some(
           (post) => post._id === newPost._id
@@ -67,7 +56,6 @@ function Feed({ newPost }) {
   // =========================
   // LIKE / UNLIKE
   // =========================
-
   const handleLike = async (postId, liked) => {
     try {
       let data;
@@ -97,7 +85,6 @@ function Feed({ newPost }) {
   // =========================
   // LOADING
   // =========================
-
   if (loading) {
     return (
       <div className="feed-message">
@@ -109,7 +96,6 @@ function Feed({ newPost }) {
   // =========================
   // ERROR
   // =========================
-
   if (error) {
     return (
       <div className="feed-message feed-error">
@@ -121,7 +107,6 @@ function Feed({ newPost }) {
   // =========================
   // FEED
   // =========================
-
   return (
     <div className="feed">
       {posts.length === 0 ? (
@@ -134,17 +119,11 @@ function Feed({ newPost }) {
             className="post-card"
             key={post._id}
           >
-
-            {/* =========================
-                AUTHOR
-            ========================= */}
-
+            {/* AUTHOR */}
             <div className="post-author">
-
               <div className="author-info">
                 <strong>
-                  {post.author?.name ||
-                    "Unknown User"}
+                  {post.author?.name || "Unknown User"}
                 </strong>
 
                 <small>
@@ -155,23 +134,16 @@ function Feed({ newPost }) {
                     : ""}
                 </small>
               </div>
-
             </div>
 
-            {/* =========================
-                CONTENT
-            ========================= */}
-
+            {/* CONTENT */}
             {post.content && (
               <p className="post-content">
                 {post.content}
               </p>
             )}
 
-            {/* =========================
-                IMAGE
-            ========================= */}
-
+            {/* IMAGE */}
             {post.image && (
               <img
                 src={post.image}
@@ -180,12 +152,8 @@ function Feed({ newPost }) {
               />
             )}
 
-            {/* =========================
-                ACTIONS
-            ========================= */}
-
+            {/* ACTIONS */}
             <div className="post-actions">
-
               <button
                 type="button"
                 className="like-button"
@@ -212,9 +180,7 @@ function Feed({ newPost }) {
                   ? "like"
                   : "likes"}
               </span>
-
             </div>
-
           </div>
         ))
       )}

@@ -11,6 +11,7 @@ function Login({ onLogin, onRegister }) {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handle input changes
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -18,6 +19,7 @@ function Login({ onLogin, onRegister }) {
     });
   };
 
+  // Handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,12 +28,14 @@ function Login({ onLogin, onRegister }) {
 
       const data = await loginUser(form);
 
+      // Save login information
       localStorage.setItem("token", data.token);
       localStorage.setItem(
         "user",
         JSON.stringify(data.user)
       );
 
+      // Send user information to App
       onLogin(data.user);
     } catch (error) {
       setError(error.message);
@@ -98,11 +102,7 @@ function Login({ onLogin, onRegister }) {
               <input
                 id="login-password"
                 name="password"
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={handleChange}
@@ -116,9 +116,7 @@ function Login({ onLogin, onRegister }) {
                   setShowPassword(!showPassword)
                 }
               >
-                {showPassword
-                  ? "Hide"
-                  : "Show"}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>

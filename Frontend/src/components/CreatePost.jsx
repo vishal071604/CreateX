@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPost } from "../services/postService";
 
 function CreatePost({ onPostCreated }) {
@@ -7,9 +7,13 @@ function CreatePost({ onPostCreated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const imageInputRef = useRef(null);
+
+  // Handle post creation
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check whether post has text or image
     if (!content.trim() && !image) {
       setError("Write something or select an image");
       return;
@@ -19,6 +23,7 @@ function CreatePost({ onPostCreated }) {
       setLoading(true);
       setError("");
 
+      // Create FormData
       const formData = new FormData();
 
       formData.append("content", content);
@@ -27,13 +32,18 @@ function CreatePost({ onPostCreated }) {
         formData.append("image", image);
       }
 
+      // Send post to backend
       const data = await createPost(formData);
 
+      // Clear form
       setContent("");
       setImage(null);
 
-      document.getElementById("imageInput").value = "";
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
 
+      // Send new post to Home
       onPostCreated(data.post);
     } catch (error) {
       setError(error.message);
@@ -47,24 +57,34 @@ function CreatePost({ onPostCreated }) {
       <h2>Create Post</h2>
 
       <form onSubmit={handleSubmit}>
+        {/* Post Content */}
         <textarea
           placeholder="What's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
+        {/* Image */}
         <input
-          id="imageInput"
+          ref={imageInputRef}
           type="file"
           accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={(e) =>
+            setImage(e.target.files[0])
+          }
         />
 
+        {/* Selected Image Name */}
         {image && <p>{image.name}</p>}
 
+        {/* Error */}
         {error && <p>{error}</p>}
 
-        <button type="submit" disabled={loading}>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Uploading..." : "Create Post"}
         </button>
       </form>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import CreatePost from "../components/CreatePost";
 import Feed from "../components/Feed";
 
@@ -7,13 +8,9 @@ function Home() {
 
   return (
     <div className="home-container">
-      <CreatePost
-        onPostCreated={setNewPost}
-      />
+      <CreatePost onPostCreated={setNewPost} />
 
-      <Feed
-        newPost={newPost}
-      />
+      <Feed newPost={newPost} />
     </div>
   );
 }
