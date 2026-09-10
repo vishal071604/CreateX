@@ -3,39 +3,45 @@ const express = require("express");
 const {
   likePost,
   unlikePost,
-  getLikeCount,
-  checkLike,
+  getLikeInfo,
 } = require("../controllers/likeController");
 
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// LIKE
+
+// =========================
+// LIKE POST
+// =========================
+
 router.post(
   "/:postId",
   protect,
   likePost
 );
 
-// UNLIKE
+
+// =========================
+// UNLIKE POST
+// =========================
+
 router.delete(
   "/:postId",
   protect,
   unlikePost
 );
 
-// GET TOTAL LIKE COUNT
+
+// =========================
+// GET LIKE INFORMATION
+// =========================
+
 router.get(
-  "/:postId/count",
-  getLikeCount
+  "/:postId",
+  protect,
+  getLikeInfo
 );
 
-// CHECK CURRENT USER LIKE
-router.get(
-  "/:postId/check",
-  protect,
-  checkLike
-);
 
 module.exports = router;

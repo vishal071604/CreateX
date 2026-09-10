@@ -9,7 +9,7 @@ const likePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    // Check post exists
+    // Check whether post exists
     const post = await Post.findById(postId);
 
     if (!post) {
@@ -18,7 +18,7 @@ const likePost = async (req, res) => {
       });
     }
 
-    // Check whether this user already liked
+    // Check whether user already liked
     const existingLike = await Like.findOne({
       user: req.userId,
       post: postId,
@@ -34,18 +34,20 @@ const likePost = async (req, res) => {
     await Like.create({
       user: req.userId,
       post: postId,
+      liked: true,
     });
 
-    // Count ALL likes
-    const likesCount = await Like.countDocuments({
-      post: postId,
-    });
+    // Increase likes count
+    post.likesCount = post.likesCount + 1;
+
+    await post.save();
 
     res.status(201).json({
       message: "Post liked",
       liked: true,
-      likesCount,
+      likesCount: post.likesCount,
     });
+
   } catch (error) {
     console.error("Like error:", error);
 
@@ -65,11 +67,11 @@ const unlikePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    const deletedLike =
-      await Like.findOneAndDelete({
-        user: req.userId,
-        post: postId,
-      });
+    // Find and delete user's like
+    const deletedLike = await Like.findOneAndDelete({
+      user: req.userId,
+      post: postId,
+    });
 
     if (!deletedLike) {
       return res.status(400).json({
@@ -77,16 +79,26 @@ const unlikePost = async (req, res) => {
       });
     }
 
-    // Count ALL remaining likes
-    const likesCount = await Like.countDocuments({
-      post: postId,
-    });
+    // Find post
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+
+    // Decrease likes count
+    post.likesCount = post.likesCount - 1;
+
+    await post.save();
 
     res.status(200).json({
       message: "Post unliked",
       liked: false,
-      likesCount,
+      likesCount: post.likesCount,
     });
+
   } catch (error) {
     console.error("Unlike error:", error);
 
@@ -99,59 +111,38 @@ const unlikePost = async (req, res) => {
 
 
 // =========================
-// GET LIKE COUNT
+// GET LIKE INFORMATION
 // =========================
 
-const getLikeCount = async (req, res) => {
+const getLikeInfo = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    const likesCount =
-      await Like.countDocuments({
-        post: postId,
+    // Find post
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
       });
+    }
 
-    res.status(200).json({
-      likesCount,
-    });
-  } catch (error) {
-    console.error(
-      "Get likes error:",
-      error
-    );
-
-    res.status(500).json({
-      message: "Failed to get likes",
-      error: error.message,
-    });
-  }
-};
-
-
-// =========================
-// CHECK CURRENT USER LIKE
-// =========================
-
-const checkLike = async (req, res) => {
-  try {
-    const { postId } = req.params;
-
+    // Check whether current user liked
     const like = await Like.findOne({
       user: req.userId,
       post: postId,
     });
 
     res.status(200).json({
+      likesCount: post.likesCount,
       liked: !!like,
     });
+
   } catch (error) {
-    console.error(
-      "Check like error:",
-      error
-    );
+    console.error("Get like info error:", error);
 
     res.status(500).json({
-      message: "Failed to check like",
+      message: "Failed to get like information",
       error: error.message,
     });
   }
@@ -161,6 +152,5 @@ const checkLike = async (req, res) => {
 module.exports = {
   likePost,
   unlikePost,
-  getLikeCount,
-  checkLike,
+  getLikeInfo,
 };
