@@ -1,111 +1,118 @@
 # 🚀 CreateX
 
-CreateX is a full-stack **MERN social media application** that allows users to create, share, and interact with posts through a modern and responsive social media feed.
+A full-stack social media web application built using the **MERN stack**.
 
-The application demonstrates practical full-stack development using **React.js, Node.js, Express.js, MongoDB, REST APIs, ImageKit, and JWT-based authentication**.
+CreateX allows users to register and log in, create posts with text and images, view posts in a feed, and like or unlike posts.
+
+---
+
+## 🌐 Live Demo
+
+🔗 **Frontend:** https://create-x-sigma.vercel.app
+
+🔗 **Backend:** https://createx-backend-9xqk.onrender.com
+
+## 💻 GitHub Repository
+
+🔗 https://github.com/vishal071604/CreateX
 
 ---
 
 ## ✨ Features
 
-### 👤 User Authentication
-
-- User registration
-- User login
-- JWT-based authentication
-- Protected routes
-- User-specific content
-
-### 📝 Post Management
-
-- Create social media posts
-- Add text content to posts
-- Upload images with posts
-- View posts in a dynamic feed
-- Display post author
-- Display post creation date and time
-- User-specific post ownership
-
-### ❤️ Post Interaction
-
-- Like posts
-- Unlike posts
-- Real-time like count updates
-- Visual liked/unliked heart state
-
-### 🖼️ Image Handling
-
-- Upload images
-- Multer for file handling
-- ImageKit for cloud image storage
-- Display uploaded images in the feed
-
-### 📱 Feed
-
-- Dynamic post feed
-- Latest posts appear at the top
-- Automatically displays newly created posts
-- Loading state
-- Error handling
-- Empty feed state
+- 👤 User registration
+- 🔐 User login and logout
+- 🎫 JWT-based authentication
+- 📝 Create text posts
+- 🖼️ Upload images with posts
+- 📰 View posts in a feed
+- ❤️ Like and unlike posts
+- 🔢 Display total likes
+- 👥 Display post author information
+- 🗄️ MongoDB database
+- ☁️ Image uploads using ImageKit
+- 🔗 REST API
+- 📱 Responsive user interface
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-## Frontend
+### 🎨 Frontend
 
-- React.js
-- Vite
-- CSS
-- Axios
-- React Hooks
+- ⚛️ React.js
+- ⚡ Vite
+- 🟨 JavaScript
+- 🌐 HTML5
+- 🎨 CSS3
 
-## Backend
+### ⚙️ Backend
 
-- Node.js
-- Express.js
-- REST API
-- JWT
-- Cookie-based Authentication
-- Multer
+- 🟢 Node.js
+- 🚂 Express.js
+- 🍃 MongoDB
+- 📦 Mongoose
+- 🔑 JWT
+- 🔒 bcryptjs
+- 📤 Multer
 
-## Database
+### 🔧 Other Tools
 
-- MongoDB
-- Mongoose
-
-## Cloud Storage
-
-- ImageKit
+- 🖼️ ImageKit
+- 🔧 Git
+- 🐙 GitHub
+- 🧪 Postman
+- ▲ Vercel
+- 🚀 Render
 
 ---
 
-# 🏗️ Application Architecture
+## 📁 Project Structure
 
 ```text
-                     ┌──────────────────┐
-                     │      User        │
-                     └────────┬─────────┘
-                              │
-                              ▼
-                     ┌──────────────────┐
-                     │ React Frontend   │
-                     │     + Vite       │
-                     └────────┬─────────┘
-                              │
-                         Axios / REST
-                              │
-                              ▼
-                     ┌──────────────────┐
-                     │ Express Backend  │
-                     │     + Node.js    │
-                     └───────┬──────────┘
-                             │
-                ┌────────────┴────────────┐
-                │                         │
-                ▼                         ▼
-        ┌───────────────┐         ┌───────────────┐
-        │    MongoDB    │         │    ImageKit   │
-        │  Users/Posts  │         │    Images     │
-        └───────────────┘         └───────────────┘
+CreateX/
+│
+├── 📂 Frontend/
+│   ├── 📂 src/
+│   │   ├── 📂 components/
+│   │   ├── 📂 pages/
+│   │   ├── 📂 services/
+│   │   ├── 📄 App.jsx
+│   │   └── 📄 main.jsx
+│   │
+│   ├── 📂 public/
+│   ├── 🔐 .env
+│   ├── 📄 package.json
+│   └── 📄 vite.config.js
+│
+├── 📂 Backend/
+│   ├── 📂 config/
+│   │   └── 📄 db.js
+│   │
+│   ├── 📂 controllers/
+│   │   ├── 📄 authController.js
+│   │   ├── 📄 postController.js
+│   │   └── 📄 likeController.js
+│   │
+│   ├── 📂 middleware/
+│   │   ├── 📄 authMiddleware.js
+│   │   └── 📄 upload.js
+│   │
+│   ├── 📂 models/
+│   │   ├── 📄 User.js
+│   │   ├── 📄 Post.js
+│   │   └── 📄 Like.js
+│   │
+│   ├── 📂 routes/
+│   │   ├── 📄 authRoutes.js
+│   │   ├── 📄 postRoutes.js
+│   │   └── 📄 likeRoutes.js
+│   │
+│   ├── 📂 utils/
+│   │   └── 📄 uploadFile.js
+│   │
+│   ├── 📄 server.js
+│   ├── 📄 package.json
+│   └── 🔐 .env
+│
+└── 📄 README.md
