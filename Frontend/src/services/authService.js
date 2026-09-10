@@ -1,4 +1,11 @@
-const API_URL = "http://localhost:5000/api/auth";
+// In development Vite forwards /api requests to the backend.  A deployed app
+// can override this with VITE_API_URL (for example, https://api.example.com/api).
+const API_URL = `${import.meta.env.VITE_API_URL || "/api"}/auth`;
+
+const connectionError = (error) =>
+  error instanceof TypeError || error.message?.includes("Unexpected token")
+    ? "Unable to reach the API. Start the backend server and try again."
+    : error.message || "Unable to connect to server";
 
 // =========================
 // REGISTER USER
@@ -24,9 +31,7 @@ export const registerUser = async (userData) => {
 
     return data;
   } catch (error) {
-    throw new Error(
-      error.message || "Unable to connect to server"
-    );
+    throw new Error(connectionError(error));
   }
 };
 
@@ -55,9 +60,7 @@ export const loginUser = async (userData) => {
 
     return data;
   } catch (error) {
-    throw new Error(
-      error.message || "Unable to connect to server"
-    );
+    throw new Error(connectionError(error));
   }
 };
 
