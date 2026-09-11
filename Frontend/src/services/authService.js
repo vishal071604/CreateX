@@ -50,4 +50,3 @@ export const logoutUser = async () => {
 
   return response.data;
 };
-

@@ -20,7 +20,6 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://create-x-psi.vercel.app",
       process.env.FRONTEND_URL,
     ],
     credentials: true,
@@ -28,7 +27,6 @@ app.use(
 );
 
 app.use(express.json());
-
 app.use(cookieParser());
 
 // =========================
@@ -46,9 +44,7 @@ app.get("/", (req, res) => {
 // =========================
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/posts", postRoutes);
-
 app.use("/api/likes", likeRoutes);
 
 // =========================
