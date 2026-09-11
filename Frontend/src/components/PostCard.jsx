@@ -16,20 +16,10 @@ function PostCard({ post }) {
 
   const [loading, setLoading] = useState(false);
 
-  // =========================
-  // LIKE / UNLIKE
-  // =========================
   const handleLike = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login to like posts");
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
-
       let data;
 
       if (liked) {
@@ -41,16 +31,16 @@ function PostCard({ post }) {
       setLiked(data.liked);
       setLikesCount(data.likesCount);
     } catch (error) {
-      console.error("Like error:", error);
-    } finally {
-      setLoading(false);
+      console.log(error.message);
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="post-card">
 
-      {/* AUTHOR */}
+      {/* Author */}
       <div className="post-author">
         <strong>
           {post.author?.name || "Unknown User"}
@@ -58,21 +48,19 @@ function PostCard({ post }) {
 
         <small>
           {post.createdAt
-            ? new Date(
-                post.createdAt
-              ).toLocaleString()
+            ? new Date(post.createdAt).toLocaleString()
             : ""}
         </small>
       </div>
 
-      {/* CONTENT */}
+      {/* Content */}
       {post.content && (
         <p className="post-content">
           {post.content}
         </p>
       )}
 
-      {/* IMAGE */}
+      {/* Image */}
       {post.image && (
         <img
           src={post.image}
@@ -81,18 +69,13 @@ function PostCard({ post }) {
         />
       )}
 
-      {/* ACTIONS */}
+      {/* Like */}
       <div className="post-actions">
         <button
           type="button"
           className="like-button"
           onClick={handleLike}
           disabled={loading}
-          aria-label={
-            liked
-              ? "Unlike post"
-              : "Like post"
-          }
         >
           <span className="heart-icon">
             {liked ? "❤️" : "♡"}
@@ -106,8 +89,10 @@ function PostCard({ post }) {
             : "likes"}
         </span>
       </div>
+
     </div>
   );
 }
 
 export default PostCard;
+

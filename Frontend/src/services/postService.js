@@ -1,44 +1,36 @@
-// API URL
-const API_URL = `${import.meta.env.VITE_API_URL}/posts`;
+
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 // =========================
 // CREATE POST
 // =========================
+
 export const createPost = async (formData) => {
-  const token = localStorage.getItem("token");
+  const response = await axios.post(
+    `${API_URL}/posts`,
+    formData,
+    {
+      withCredentials: true,
+    }
+  );
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to create post"
-    );
-  }
-
-  return data;
+  return response.data;
 };
 
 // =========================
 // GET POSTS
 // =========================
+
 export const getPosts = async () => {
-  const response = await fetch(API_URL);
+  const response = await axios.get(
+    `${API_URL}/posts`,
+    {
+      withCredentials: true,
+    }
+  );
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to fetch posts"
-    );
-  }
-
-  return data.posts;
+  return response.data.posts;
 };
+

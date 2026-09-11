@@ -1,69 +1,50 @@
-// API URL
-const API_URL = `${import.meta.env.VITE_API_URL}/likes`;
+import axios from "axios";
 
-// =========================
-// GET AUTH HEADERS
-// =========================
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
+const API_URL = import.meta.env.VITE_API_URL;
 
 // =========================
 // LIKE POST
 // =========================
+
 export const likePost = async (postId) => {
-  const response = await fetch(`${API_URL}/${postId}`, {
-    method: "POST",
-    headers: getAuthHeaders(),
-  });
+  const response = await axios.post(
+    `${API_URL}/likes/${postId}`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to like post");
-  }
-
-  return data;
+  return response.data;
 };
 
 // =========================
 // UNLIKE POST
 // =========================
+
 export const unlikePost = async (postId) => {
-  const response = await fetch(`${API_URL}/${postId}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
+  const response = await axios.delete(
+    `${API_URL}/likes/${postId}`,
+    {
+      withCredentials: true,
+    }
+  );
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to unlike post");
-  }
-
-  return data;
+  return response.data;
 };
 
 // =========================
 // GET LIKE INFORMATION
 // =========================
+
 export const getLikeInfo = async (postId) => {
-  const response = await fetch(`${API_URL}/${postId}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
+  const response = await axios.get(
+    `${API_URL}/likes/${postId}`,
+    {
+      withCredentials: true,
+    }
+  );
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to get like information"
-    );
-  }
-
-  return data;
+  return response.data;
 };
+

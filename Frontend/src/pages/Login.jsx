@@ -1,44 +1,33 @@
 import { useState } from "react";
+
 import { loginUser } from "../services/authService";
+
 import "../App.css";
 
-function Login({ onLogin, onRegister }) {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [error, setError] = useState("");
+function Login({ onRegister, onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle login
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setError("");
 
-      const data = await loginUser(form);
+      const data = await loginUser({
+        email,
+        password,
+      });
 
-      // Save login information
-      localStorage.setItem("token", data.token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.user)
-      );
-
-      // Send user information to App
       onLogin(data.user);
     } catch (error) {
-      setError(error.message);
+      const message =
+        error.response?.data?.message ||
+        "Login failed";
+
+      setError(message);
     }
   };
 
@@ -46,17 +35,14 @@ function Login({ onLogin, onRegister }) {
     <div className="auth-container">
       <div className="login-card">
 
-        {/* Logo */}
         <div className="login-logo">
           N
         </div>
 
-        {/* Brand */}
         <h1 className="brand-name">
           Post<span>Sphere</span>
         </h1>
 
-        {/* Heading */}
         <h2>Welcome back</h2>
 
         <p className="login-subtitle">
@@ -65,11 +51,8 @@ function Login({ onLogin, onRegister }) {
 
         <form onSubmit={handleSubmit}>
 
-          {/* Email */}
           <div className="input-group">
-            <label htmlFor="login-email">
-              Email
-            </label>
+            <label>Email</label>
 
             <div className="input-wrapper">
               <span className="input-icon">
@@ -77,22 +60,19 @@ function Login({ onLogin, onRegister }) {
               </span>
 
               <input
-                id="login-email"
-                name="email"
                 type="email"
                 placeholder="Enter your email"
-                value={form.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
                 required
               />
             </div>
           </div>
 
-          {/* Password */}
           <div className="input-group">
-            <label htmlFor="login-password">
-              Password
-            </label>
+            <label>Password</label>
 
             <div className="input-wrapper">
               <span className="input-icon">
@@ -100,12 +80,16 @@ function Login({ onLogin, onRegister }) {
               </span>
 
               <input
-                id="login-password"
-                name="password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 placeholder="Enter your password"
-                value={form.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
                 required
               />
 
@@ -121,23 +105,21 @@ function Login({ onLogin, onRegister }) {
             </div>
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
             className="login-button"
           >
             Login
           </button>
+
         </form>
 
-        {/* Error */}
         {error && (
           <p className="login-error">
             {error}
           </p>
         )}
 
-        {/* Sign Up */}
         <div className="signup-section">
           <span>
             Don't have an account?
@@ -152,7 +134,6 @@ function Login({ onLogin, onRegister }) {
           </button>
         </div>
 
-        {/* Security */}
         <div className="security-text">
           🔒 Your data is safe and secure
         </div>
@@ -163,3 +144,4 @@ function Login({ onLogin, onRegister }) {
 }
 
 export default Login;
+

@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+
+import { useState } from "react";
+
 import { createPost } from "../services/postService";
 
 function CreatePost({ onPostCreated }) {
@@ -7,23 +9,23 @@ function CreatePost({ onPostCreated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const imageInputRef = useRef(null);
+  // =========================
+  // CREATE POST
+  // =========================
 
-  // Handle post creation
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check whether post has text or image
+    // Prevent empty post
     if (!content.trim() && !image) {
-      setError("Write something or select an image");
+      setError("Please add some text or an image");
       return;
     }
 
     try {
-      setLoading(true);
       setError("");
+      setLoading(true);
 
-      // Create FormData
       const formData = new FormData();
 
       formData.append("content", content);
@@ -32,21 +34,23 @@ function CreatePost({ onPostCreated }) {
         formData.append("image", image);
       }
 
-      // Send post to backend
       const data = await createPost(formData);
 
       // Clear form
       setContent("");
       setImage(null);
 
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
+      onPostCreated?.(data.post);
 
-      // Send new post to Home
-      onPostCreated(data.post);
+      // Reset file input
+      e.target.reset();
     } catch (error) {
-      setError(error.message);
+      const message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to create post";
+
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -57,16 +61,18 @@ function CreatePost({ onPostCreated }) {
       <h2>Create Post</h2>
 
       <form onSubmit={handleSubmit}>
-        {/* Post Content */}
+
+        {/* Content */}
         <textarea
           placeholder="What's on your mind?"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) =>
+            setContent(e.target.value)
+          }
         />
 
         {/* Image */}
         <input
-          ref={imageInputRef}
           type="file"
           accept="image/*"
           onChange={(e) =>
@@ -74,22 +80,32 @@ function CreatePost({ onPostCreated }) {
           }
         />
 
-        {/* Selected Image Name */}
-        {image && <p>{image.name}</p>}
+        {/* Selected image */}
+        {image && (
+          <p>{image.name}</p>
+        )}
 
         {/* Error */}
-        {error && <p>{error}</p>}
+        {error && (
+          <p className="login-error">
+            {error}
+          </p>
+        )}
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
         >
-          {loading ? "Uploading..." : "Create Post"}
+          {loading
+            ? "Uploading..."
+            : "Create Post"}
         </button>
+
       </form>
     </div>
   );
 }
 
 export default CreatePost;
+

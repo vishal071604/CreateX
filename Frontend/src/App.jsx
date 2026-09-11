@@ -8,83 +8,31 @@ import Register from "./pages/Register.jsx";
 import "./App.css";
 
 function App() {
-  // =========================
-  // GET SAVED USER
-  // =========================
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
+  const [user, setUser] = useState(null);
+  const [register, setRegister] = useState(false);
 
-    if (!savedUser) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(savedUser);
-    } catch (error) {
-      console.error("Invalid saved user:", error);
-      localStorage.removeItem("user");
-      return null;
-    }
-  });
-
-  // =========================
-  // CURRENT PAGE
-  // =========================
-  const [page, setPage] = useState(
-    user ? "home" : "login"
-  );
-
-  // =========================
-  // LOGIN
-  // =========================
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setPage("home");
-  };
-
-  // =========================
-  // LOGOUT
-  // =========================
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setUser(null);
-    setPage("login");
-  };
-
-  // =========================
-  // AUTH PAGES
-  // =========================
   if (!user) {
+    if (register) {
+      return (
+        <Register
+          onLogin={() => setRegister(false)}
+        />
+      );
+    }
+
     return (
-      <div className="auth-page">
-        {page === "login" ? (
-          <Login
-            onLogin={handleLogin}
-            onRegister={() =>
-              setPage("register")
-            }
-          />
-        ) : (
-          <Register
-            onLogin={() =>
-              setPage("login")
-            }
-          />
-        )}
-      </div>
+      <Login
+        onRegister={() => setRegister(true)}
+        onLogin={(user) => setUser(user)}
+      />
     );
   }
 
-  // =========================
-  // HOME PAGE
-  // =========================
   return (
     <>
       <Navbar
         user={user}
-        onLogout={handleLogout}
+        onLogout={() => setUser(null)}
       />
 
       <Home />
@@ -93,3 +41,4 @@ function App() {
 }
 
 export default App;
+

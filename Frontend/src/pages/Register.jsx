@@ -1,48 +1,40 @@
+
 import { useState } from "react";
+
 import { registerUser } from "../services/authService";
+
 import "../App.css";
 
 function Register({ onLogin }) {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle registration
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setError("");
-      setMessage("");
 
-      const data = await registerUser(form);
-
-      setMessage(
-        data.message || "Registration successful"
-      );
-
-      // Clear form
-      setForm({
-        name: "",
-        email: "",
-        password: "",
+      await registerUser({
+        name,
+        email,
+        password,
       });
+
+      setName("");
+      setEmail("");
+      setPassword("");
+
+      onLogin();
     } catch (error) {
-      setError(error.message);
+      const message =
+        error.response?.data?.message ||
+        "Registration failed";
+
+      setError(message);
     }
   };
 
@@ -50,17 +42,14 @@ function Register({ onLogin }) {
     <div className="auth-container">
       <div className="register-card">
 
-        {/* Logo */}
         <div className="register-logo">
           N
         </div>
 
-        {/* Brand */}
         <h1 className="brand-name">
           Post<span>Sphere</span>
         </h1>
 
-        {/* Heading */}
         <h2>Create Account</h2>
 
         <p className="register-subtitle">
@@ -69,109 +58,73 @@ function Register({ onLogin }) {
 
         <form onSubmit={handleSubmit}>
 
-          {/* Name */}
           <div className="input-group">
-            <label htmlFor="name">
-              Name
-            </label>
+            <label>Name</label>
 
             <div className="input-wrapper">
-              <span className="input-icon">
-                👤
-              </span>
-
+              <span className="input-icon">👤</span>
               <input
-                id="name"
-                name="name"
                 type="text"
                 placeholder="Enter your name"
-                value={form.name}
-                onChange={handleChange}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
           </div>
 
-          {/* Email */}
           <div className="input-group">
-            <label htmlFor="email">
-              Email
-            </label>
+            <label>Email</label>
 
             <div className="input-wrapper">
-              <span className="input-icon">
-                ✉
-              </span>
-
+              <span className="input-icon">✉</span>
               <input
-                id="email"
-                name="email"
                 type="email"
                 placeholder="Enter your email"
-                value={form.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
           </div>
 
-          {/* Password */}
           <div className="input-group">
-            <label htmlFor="password">
-              Password
-            </label>
+            <label>Password</label>
 
             <div className="input-wrapper">
-              <span className="input-icon">
-                🔒
-              </span>
-
+              <span className="input-icon">🔒</span>
               <input
-                id="password"
-                name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a password"
-                value={form.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
+                onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
-          {/* Register Button */}
+          {error && (
+            <p className="login-error">
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
             className="login-button"
           >
             Create Account
           </button>
+
         </form>
 
-        {/* Success Message */}
-        {message && (
-          <p className="login-success">
-            {message}
-          </p>
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <p className="login-error">
-            {error}
-          </p>
-        )}
-
-        {/* Login */}
         <div className="signup-section">
           <span>
             Already have an account?
@@ -186,7 +139,6 @@ function Register({ onLogin }) {
           </button>
         </div>
 
-        {/* Security */}
         <div className="security-text">
           🔒 Your data is safe and secure
         </div>
@@ -197,3 +149,4 @@ function Register({ onLogin }) {
 }
 
 export default Register;
+

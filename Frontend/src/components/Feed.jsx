@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getPosts } from "../services/postService";
+
 import {
   likePost,
   unlikePost,
@@ -11,20 +12,19 @@ function Feed({ newPost }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // =========================
-  // LOAD POSTS
-  // =========================
   const loadPosts = async () => {
     try {
-      setLoading(true);
       setError("");
 
-      const data = await getPosts();
+      const posts = await getPosts();
 
-      setPosts(Array.isArray(data) ? data : []);
+      setPosts(posts);
     } catch (error) {
-      console.error("Feed error:", error);
-      setError(error.message || "Failed to load posts");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to load posts"
+      );
     } finally {
       setLoading(false);
     }
@@ -34,28 +34,12 @@ function Feed({ newPost }) {
     loadPosts();
   }, []);
 
-  // =========================
-  // ADD NEW POST
-  // =========================
   useEffect(() => {
-    if (newPost && newPost._id) {
-      setPosts((prevPosts) => {
-        const alreadyExists = prevPosts.some(
-          (post) => post._id === newPost._id
-        );
-
-        if (alreadyExists) {
-          return prevPosts;
-        }
-
-        return [newPost, ...prevPosts];
-      });
+    if (newPost) {
+      setPosts((currentPosts) => [newPost, ...currentPosts]);
     }
   }, [newPost]);
 
-  // =========================
-  // LIKE / UNLIKE
-  // =========================
   const handleLike = async (postId, liked) => {
     try {
       let data;
@@ -66,8 +50,8 @@ function Feed({ newPost }) {
         data = await likePost(postId);
       }
 
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
+      setPosts((currentPosts) =>
+        currentPosts.map((post) =>
           post._id === postId
             ? {
                 ...post,
@@ -82,9 +66,6 @@ function Feed({ newPost }) {
     }
   };
 
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
     return (
       <div className="feed-message">
@@ -93,9 +74,6 @@ function Feed({ newPost }) {
     );
   }
 
-  // =========================
-  // ERROR
-  // =========================
   if (error) {
     return (
       <div className="feed-message feed-error">
@@ -104,9 +82,6 @@ function Feed({ newPost }) {
     );
   }
 
-  // =========================
-  // FEED
-  // =========================
   return (
     <div className="feed">
       {posts.length === 0 ? (
@@ -119,7 +94,6 @@ function Feed({ newPost }) {
             className="post-card"
             key={post._id}
           >
-            {/* AUTHOR */}
             <div className="post-author">
               <div className="author-info">
                 <strong>
@@ -136,14 +110,12 @@ function Feed({ newPost }) {
               </div>
             </div>
 
-            {/* CONTENT */}
             {post.content && (
               <p className="post-content">
                 {post.content}
               </p>
             )}
 
-            {/* IMAGE */}
             {post.image && (
               <img
                 src={post.image}
@@ -152,7 +124,6 @@ function Feed({ newPost }) {
               />
             )}
 
-            {/* ACTIONS */}
             <div className="post-actions">
               <button
                 type="button"
@@ -162,11 +133,6 @@ function Feed({ newPost }) {
                     post._id,
                     post.liked
                   )
-                }
-                aria-label={
-                  post.liked
-                    ? "Unlike post"
-                    : "Like post"
                 }
               >
                 <span className="heart-icon">
@@ -189,3 +155,4 @@ function Feed({ newPost }) {
 }
 
 export default Feed;
+

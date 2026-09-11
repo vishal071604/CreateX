@@ -1,23 +1,28 @@
+
 import { logoutUser } from "../services/authService";
 
 function Navbar({ user, onLogout }) {
-  // =========================
-  // LOGOUT
-  // =========================
-  const handleLogout = () => {
-    logoutUser();
-    onLogout();
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      onLogout();
+    }
   };
 
   return (
     <nav className="navbar">
-      {/* App Name */}
       <h2>CreateX</h2>
 
-      {/* User Information */}
       {user && (
         <div>
-          <span>Hi, {user.name}</span>
+          <span>
+            Hi, {user.name}
+          </span>
 
           <button
             type="button"
@@ -32,3 +37,4 @@ function Navbar({ user, onLogout }) {
 }
 
 export default Navbar;
+

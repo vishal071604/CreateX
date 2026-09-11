@@ -9,7 +9,6 @@ function Home() {
   return (
     <div className="home-container">
       <CreatePost onPostCreated={setNewPost} />
-
       <Feed newPost={newPost} />
     </div>
   );
