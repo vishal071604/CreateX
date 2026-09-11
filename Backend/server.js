@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 require("dotenv").config();
 
 const connectDB = require("./config/db");
@@ -10,27 +12,23 @@ const likeRoutes = require("./routes/likeRoutes");
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://create-x-aayy.vercel.app",
-  ...(process.env.CORS_ORIGINS || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-];
-
 // =========================
 // MIDDLEWARE
 // =========================
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: [
+      "http://localhost:5173",
+      process.env.FRONTEND_URL,
+    ],
     credentials: true,
   })
 );
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 // =========================
 // TEST ROUTE
@@ -47,7 +45,9 @@ app.get("/", (req, res) => {
 // =========================
 
 app.use("/api/auth", authRoutes);
+
 app.use("/api/posts", postRoutes);
+
 app.use("/api/likes", likeRoutes);
 
 // =========================
@@ -56,15 +56,8 @@ app.use("/api/likes", likeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
-  try {
-    await connectDB();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    process.exitCode = 1;
-  }
-};
+connectDB();
 
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

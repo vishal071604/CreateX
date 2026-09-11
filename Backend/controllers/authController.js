@@ -2,6 +2,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// =========================
+// REGISTER
+// =========================
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -62,6 +65,9 @@ const register = async (req, res) => {
   }
 };
 
+// =========================
+// LOGIN
+// =========================
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -95,14 +101,7 @@ const login = async (req, res) => {
       });
     }
 
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET is missing");
-
-      return res.status(500).json({
-        message: "Server configuration error",
-      });
-    }
-
+    // Create JWT
     const token = jwt.sign(
       {
         userId: user._id,
@@ -113,9 +112,18 @@ const login = async (req, res) => {
       }
     );
 
+    // Cookie settings
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -131,7 +139,76 @@ const login = async (req, res) => {
   }
 };
 
+// =========================
+// GET CURRENT USER
+// =========================
+const getMe = async (req, res) => {
+  try {
+    // Get JWT from HTTP-only cookie
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({
+        message: "Not authenticated",
+      });
+    }
+
+    // Verify JWT
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    // Find user
+    const user = await User.findById(
+      decoded.userId
+    ).select("-password");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Get current user error:", error);
+
+    return res.status(401).json({
+      message: "Not authenticated",
+    });
+  }
+};
+
+// =========================
+// LOGOUT
+// =========================
+const logout = (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+  });
+
+  return res.status(200).json({
+    message: "Logout successful",
+  });
+};
+
+// =========================
+// EXPORT
+// =========================
 module.exports = {
   register,
   login,
+  getMe,
+  logout,
 };

@@ -4,10 +4,12 @@ const Post = require("../models/Post");
 // =========================
 // LIKE POST
 // =========================
+
 const likePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
+    // Find post
     const post = await Post.findById(postId);
 
     if (!post) {
@@ -16,6 +18,7 @@ const likePost = async (req, res) => {
       });
     }
 
+    // Check if user already liked the post
     const existingLike = await Like.findOne({
       user: req.userId,
       post: postId,
@@ -29,25 +32,15 @@ const likePost = async (req, res) => {
       });
     }
 
-    try {
-      await Like.create({
-        user: req.userId,
-        post: postId,
-        liked: true,
-      });
-    } catch (error) {
-      if (error.code === 11000) {
-        return res.status(400).json({
-          message: "Post already liked",
-          liked: true,
-          likesCount: post.likesCount,
-        });
-      }
+    // Create like
+    await Like.create({
+      user: req.userId,
+      post: postId,
+    });
 
-      throw error;
-    }
-
+    // Increase likes count
     post.likesCount += 1;
+
     await post.save();
 
     return res.status(201).json({
@@ -67,10 +60,12 @@ const likePost = async (req, res) => {
 // =========================
 // UNLIKE POST
 // =========================
+
 const unlikePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
+    // Find post
     const post = await Post.findById(postId);
 
     if (!post) {
@@ -79,6 +74,7 @@ const unlikePost = async (req, res) => {
       });
     }
 
+    // Delete user's like
     const deletedLike = await Like.findOneAndDelete({
       user: req.userId,
       post: postId,
@@ -92,10 +88,12 @@ const unlikePost = async (req, res) => {
       });
     }
 
-    post.likesCount = Math.max(
-      0,
-      post.likesCount - 1
-    );
+    // Decrease likes count
+    post.likesCount -= 1;
+
+    if (post.likesCount < 0) {
+      post.likesCount = 0;
+    }
 
     await post.save();
 
@@ -116,10 +114,12 @@ const unlikePost = async (req, res) => {
 // =========================
 // GET LIKE INFORMATION
 // =========================
+
 const getLikeInfo = async (req, res) => {
   try {
     const { postId } = req.params;
 
+    // Find post
     const post = await Post.findById(postId);
 
     if (!post) {
@@ -128,6 +128,7 @@ const getLikeInfo = async (req, res) => {
       });
     }
 
+    // Check if current user liked the post
     const like = await Like.findOne({
       user: req.userId,
       post: postId,
@@ -145,6 +146,10 @@ const getLikeInfo = async (req, res) => {
     });
   }
 };
+
+// =========================
+// EXPORT
+// =========================
 
 module.exports = {
   likePost,

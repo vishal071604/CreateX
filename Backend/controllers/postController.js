@@ -1,20 +1,29 @@
 const Post = require("../models/Post");
+const Like = require("../models/Like");
 const uploadFile = require("../utils/uploadFile");
+
+// =========================
+// CREATE POST
+// =========================
 
 const createPost = async (req, res) => {
   try {
     const { content } = req.body;
 
+    // Remove extra spaces
     const trimmedContent = content?.trim() || "";
 
+    // Post must have text or image
     if (!trimmedContent && !req.file) {
       return res.status(400).json({
         message: "Post must contain text or an image",
       });
     }
 
+    // Image URL
     let imageUrl = null;
 
+    // Upload image if provided
     if (req.file) {
       const result = await uploadFile(
         req.file.buffer,
@@ -24,12 +33,14 @@ const createPost = async (req, res) => {
       imageUrl = result.url;
     }
 
+    // Create post
     const post = await Post.create({
       content: trimmedContent,
       image: imageUrl,
       author: req.userId,
     });
 
+    // Get author details
     await post.populate("author", "name email");
 
     return res.status(201).json({
@@ -45,6 +56,10 @@ const createPost = async (req, res) => {
   }
 };
 
+// =========================
+// GET POSTS
+// =========================
+
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -53,8 +68,16 @@ const getPosts = async (req, res) => {
         createdAt: -1,
       });
 
+    const likes = await Like.find({ user: req.userId }).select("post");
+    const likedPostIds = new Set(
+      likes.map((like) => like.post.toString())
+    );
+
     return res.status(200).json({
-      posts,
+      posts: posts.map((post) => ({
+        ...post.toObject(),
+        liked: likedPostIds.has(post._id.toString()),
+      })),
     });
   } catch (error) {
     console.error("Get posts error:", error);
@@ -64,6 +87,10 @@ const getPosts = async (req, res) => {
     });
   }
 };
+
+// =========================
+// EXPORT
+// =========================
 
 module.exports = {
   createPost,

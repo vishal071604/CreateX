@@ -10,7 +10,6 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-
 // =========================
 // LIKE POST
 // =========================
@@ -20,7 +19,6 @@ router.post(
   protect,
   likePost
 );
-
 
 // =========================
 // UNLIKE POST
@@ -32,7 +30,6 @@ router.delete(
   unlikePost
 );
 
-
 // =========================
 // GET LIKE INFORMATION
 // =========================
@@ -42,6 +39,5 @@ router.get(
   protect,
   getLikeInfo
 );
-
 
 module.exports = router;

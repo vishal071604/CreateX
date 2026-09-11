@@ -10,18 +10,10 @@ const upload = require("../middleware/upload");
 
 const router = express.Router();
 
-// CREATE POST
-router.post(
-  "/",
-  protect,
-  upload.single("image"),
-  createPost
-);
+// Create post
+router.post("/", protect, upload.single("image"), createPost);
 
-// GET FEED
-router.get(
-  "/",
-  getPosts
-);
+// Get all posts
+router.get("/", protect, getPosts);
 
 module.exports = router;
